@@ -1,0 +1,137 @@
+{
+  "1": {
+    "inputs": {
+      "image": "STYLE_IMAGE_PLACEHOLDER"
+    },
+    "class_type": "LoadImage"
+  },
+  "2": {
+    "inputs": {
+      "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "3": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage"
+  },
+  "4": {
+    "inputs": {
+      "text": "POSITIVE_PROMPT_PLACEHOLDER",
+      "clip": [
+        "2",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "5": {
+    "inputs": {
+      "text": "NEGATIVE_PROMPT_PLACEHOLDER",
+      "clip": [
+        "2",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "6": {
+    "inputs": {
+      "style_model_name": "t2iadapter_style_sd14v1.pth"
+    },
+    "class_type": "StyleModelLoader"
+  },
+  "7": {
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ],
+      "style_model": [
+        "6",
+        0
+      ],
+      "clip_vision_output": [
+        "11",
+        0
+      ],
+      "strength": 1.0,
+      "strength_type": "multiply"
+    },
+    "class_type": "StyleModelApply"
+  },
+  "11": {
+    "inputs": {
+      "clip_vision": [
+        "12",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ],
+      "crop": "center"
+    },
+    "class_type": "CLIPVisionEncode"
+  },
+  "12": {
+    "inputs": {
+      "clip_name": "clip-vit-large-patch14.safetensors"
+    },
+    "class_type": "CLIPVisionLoader"
+  },
+  "8": {
+    "inputs": {
+      "seed": 42,
+      "steps": 20,
+      "cfg": 7.0,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1.0,
+      "model": [
+        "2",
+        0
+      ],
+      "positive": [
+        "7",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "latent_image": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "9": {
+    "inputs": {
+      "samples": [
+        "8",
+        0
+      ],
+      "vae": [
+        "2",
+        2
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "10": {
+    "inputs": {
+      "filename_prefix": "costeam_style",
+      "images": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "SaveImage"
+  }
+}

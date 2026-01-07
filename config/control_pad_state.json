@@ -1,0 +1,28 @@
+{
+  "asr": {
+    "chunk_sec": "3",
+    "context_sec": "60",
+    "language": "en",
+    "model": "faster-whisper-small",
+    "min_chars": 5
+  },
+  "slm": {
+    "timeout": 10,
+    "workers": 2,
+    "chunk_interval": 3,
+    "temperature": 0.3,
+    "num_predict": 150,
+    "max_turns": 20
+  },
+  "t2i": {
+    "style": "cinematic background, surreal dreamscape, volumetric lighting, soft gradients, Unreal Engine style, high-resolution, painterly details",
+    "staff_suffix": "",
+    "staff_negative": "",
+    "reference_images": [],
+    "version_tag": "0.0.28",
+    "enabled": true
+  },
+  "bridge": {
+    "log_level": "info"
+  }
+}

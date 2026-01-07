@@ -1,0 +1,32 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python cache / env
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.env
+.env.*
+.venv/
+venv/
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Project-specific large assets (kept out of git; download manually)
+.history/
+ComfyUI_cu126/
+models/
+data/
+snapshots/
+logs/
+state/
+ollama-models.tar.gz
+OllamaSetup.exe
