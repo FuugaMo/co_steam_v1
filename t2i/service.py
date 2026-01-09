@@ -35,6 +35,10 @@ class T2IService:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.running = False
         self.version_tag = args.version_tag
+        # Prompt controls (from args / Control Pad)
+        self.style = getattr(args, "style", "")
+        self.staff_suffix = getattr(args, "staff_suffix", "")
+        self.staff_negative = getattr(args, "staff_negative", "")
         self.reference_images: list[str] = []
         # 去抖与排队上限（单线程防堆积）
         self.max_queue = 1
