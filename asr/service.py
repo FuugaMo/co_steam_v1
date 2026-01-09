@@ -60,6 +60,15 @@ def find_input_device(name_substring):
     return None
 
 
+def list_input_devices():
+    """Return list of (index, name) for input-capable devices"""
+    devices = []
+    for idx, dev in enumerate(sd.query_devices()):
+        if dev.get('max_input_channels', 0) > 0:
+            devices.append((idx, dev.get('name', '')))
+    return devices
+
+
 class ASRService:
     def __init__(self, args):
         self.args = args
@@ -96,12 +105,16 @@ class ASRService:
 
     def run_asr_loop(self):
         """ASR processing loop (runs in separate thread)"""
-        device_index = find_input_device(self.args.device)
-        if device_index is None:
-            print('Input device not found, using default.', file=sys.stderr)
+        if self.args.device_index is not None:
+            device_index = self.args.device_index
+            print(f'Input device (by index): {device_index}')
         else:
-            dev_name = sd.query_devices(device_index)['name']
-            print(f'Input device: {dev_name}')
+            device_index = find_input_device(self.args.device)
+            if device_index is None:
+                print('Input device not found, using default.', file=sys.stderr)
+            else:
+                dev_name = sd.query_devices(device_index)['name']
+                print(f'Input device: {dev_name}')
 
         blocksize = int(self.args.sample_rate * 0.5)
         chunk_samples = int(self.args.sample_rate * self.args.chunk_sec)
@@ -217,7 +230,9 @@ class ASRService:
 
 def main():
     parser = argparse.ArgumentParser(description='ASR WebSocket Service')
-    parser.add_argument('--device', default='Yeti X', help='Input device name')
+    parser.add_argument('--device', default='Yeti X', help='Input device name (substring match)')
+    parser.add_argument('--device-index', type=int, default=None, help='Input device index (overrides --device)')
+    parser.add_argument('--list-devices', action='store_true', help='List available input devices and exit')
     parser.add_argument('--model', default='D:/co_steam_v1/models/faster-whisper-small',
                         help='ASR model path')
     parser.add_argument('--language', default='en', help='Language code')
@@ -229,6 +244,12 @@ def main():
                         help='Context window seconds (0=disable)')
     parser.add_argument('--port', type=int, default=PORTS["asr"])
     args = parser.parse_args()
+
+    if args.list_devices:
+        print("Available input devices (index: name):")
+        for idx, name in list_input_devices():
+            print(f"{idx}: {name}")
+        return
 
     service = ASRService(args)
     service.start()
