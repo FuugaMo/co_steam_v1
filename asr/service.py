@@ -69,6 +69,32 @@ def list_input_devices():
     return devices
 
 
+def prompt_device_selection():
+    """Interactively ask user to pick an input device index"""
+    devices = list_input_devices()
+    if not devices:
+        print("No input-capable devices found.")
+        return None
+
+    print("Available input devices (index: name):")
+    for idx, name in devices:
+        print(f"{idx}: {name}")
+
+    valid_indices = {idx for idx, _ in devices}
+    while True:
+        choice = input("Select input device index (or 'q' to skip): ").strip()
+        if choice.lower() == 'q':
+            return None
+        try:
+            choice_idx = int(choice)
+        except ValueError:
+            print("Please enter a number from the list.")
+            continue
+        if choice_idx in valid_indices:
+            return choice_idx
+        print("Index not in the list, try again.")
+
+
 class ASRService:
     def __init__(self, args):
         self.args = args
@@ -233,6 +259,8 @@ def main():
     parser.add_argument('--device', default='Yeti X', help='Input device name (substring match)')
     parser.add_argument('--device-index', type=int, default=None, help='Input device index (overrides --device)')
     parser.add_argument('--list-devices', action='store_true', help='List available input devices and exit')
+    parser.add_argument('--no-prompt-device', action='store_true',
+                        help='Skip interactive device selection (use flags/defaults)')
     parser.add_argument('--model', default='D:/co_steam_v1/models/faster-whisper-small',
                         help='ASR model path')
     parser.add_argument('--language', default='en', help='Language code')
@@ -250,6 +278,12 @@ def main():
         for idx, name in list_input_devices():
             print(f"{idx}: {name}")
         return
+
+    # Interactive device selection (default) unless explicitly disabled
+    if not args.no_prompt_device and args.device_index is None:
+        selection = prompt_device_selection()
+        if selection is not None:
+            args.device_index = selection
 
     service = ASRService(args)
     service.start()
